@@ -93,7 +93,7 @@ namespace DiscussionBoard.Data.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(1000)
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -153,7 +153,7 @@ namespace DiscussionBoard.Data.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(1000)
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -350,7 +350,7 @@ namespace DiscussionBoard.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("DiscussionBoard.Models.Post", "ParentPost")
-                        .WithMany("Posts")
+                        .WithMany("Replies")
                         .HasForeignKey("ParentPostId");
 
                     b.Navigation("ApplicationUser");
@@ -430,7 +430,7 @@ namespace DiscussionBoard.Data.Migrations
 
             modelBuilder.Entity("DiscussionBoard.Models.Post", b =>
                 {
-                    b.Navigation("Posts");
+                    b.Navigation("Replies");
                 });
 #pragma warning restore 612, 618
         }

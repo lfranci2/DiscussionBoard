@@ -21,7 +21,7 @@ namespace DiscussionBoard.Data
                 entity.HasOne(p => p.DiscussionThread)
                     .WithMany(t => t.Posts)
                     .HasForeignKey(i => i.DiscussionThreadId);
-                entity.HasMany(t => t.Posts)
+                entity.HasMany(t => t.Replies)
                     .WithOne(p => p.ParentPost)
                     .HasForeignKey(i => i.ParentPostId)
                     .IsRequired(false);

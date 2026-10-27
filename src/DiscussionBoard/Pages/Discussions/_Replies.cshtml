@@ -1,0 +1,15 @@
+﻿@model DiscussionBoard.Models.Post
+
+<li>
+    <p>@Model.Content</p>
+
+    @if (Model.Replies.Any())
+    {
+        <ul>
+            @foreach (var reply in Model.Replies)
+            {
+                <partial name="_Reply" model="reply" />
+            }
+        </ul>
+    }
+</li>

@@ -1,19 +1,31 @@
 @page
-@model DiscussionBoard.Pages.Discussions.Create
-
+@model Create
 @{
-    Layout = null;
+    ViewData["Title"] = "Create Discussion Thread";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
 <div>
-    
+    <h1 class="display-4">Create Discussion Thread</h1>
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger"></div>
+
+        <div class="mb-3">
+            <label for="title" asp-for="Input.Title"></label>
+            <input id="title" asp-for="Input.Title" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label for="content" asp-for="Input.Content"></label>
+            <textarea id="content" asp-for="Input.Content"
+                  class="form-control"
+                  rows="6"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create
+        </button>
+    </form>
+
 </div>
-</body>
-</html>

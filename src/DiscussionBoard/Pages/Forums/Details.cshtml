@@ -1,19 +1,18 @@
 @page "/Forum/{id}"
 @model DiscussionBoard.Pages.Details
 
-@{
-    Layout = null;
+<h1>@Model.Forum.Name</h1>
+
+<h2>Discussion Threads</h2>
+
+@if (Model.Threads.Count == 0)
+{
+    <p>No threads have been posted.</p>
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-
-</div>
-</body>
-</html>
+else
+{
+    @foreach (var thread in Model.Threads)
+    {
+        <partial name="_ThreadCard" model="thread" />
+    }
+}

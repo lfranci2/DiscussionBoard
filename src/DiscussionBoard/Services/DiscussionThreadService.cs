@@ -1,6 +1,5 @@
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Services
@@ -8,29 +7,17 @@ namespace DiscussionBoard.Services
     public class DiscussionThreadService
     {
         private readonly ApplicationDbContext _db;
-        private readonly ILogger<DiscussionThreadService> _logger;
 
-        public DiscussionThreadService(ApplicationDbContext db, ILogger<DiscussionThreadService> logger)
+        public DiscussionThreadService(ApplicationDbContext db)
             {
             _db = db;
-            _logger = logger;
             }
 
-        public async Task<List<DiscussionThread>> GetAsync(int id)
+        public async Task<DiscussionThread> GetAsync(int id)
         {
-            try
-            {
-                var list = await _db.DiscussionThreads
-                    .Where(x => x.Id == id)
-                    .ToListAsync();
-                return list;
-            }
-            catch (Exception ex)
-            {
-                var list = new List<DiscussionThread>();
-                _logger.LogError(ex.ToString());
-                return list;
-            }
+            var thread = await _db.DiscussionThreads
+                .FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+            return thread;
         }
 
         public async Task<List<DiscussionThread>> GetForForumAsync(int forumId)
@@ -45,7 +32,6 @@ namespace DiscussionBoard.Services
             catch (Exception ex)
             {
                 var list = new List<DiscussionThread>();
-                _logger.LogError(ex.ToString());
                 return list;
             }
         }
@@ -60,7 +46,6 @@ namespace DiscussionBoard.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
                 return null;
             }
         }
@@ -75,7 +60,6 @@ namespace DiscussionBoard.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
                 return null;
             }
         }
