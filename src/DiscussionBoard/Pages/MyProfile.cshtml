@@ -1,0 +1,57 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using DiscussionBoard.Services
+@model DiscussionBoard.Pages.MyProfile
+
+
+@{
+
+}
+@if (@ViewData["ErrorMessage"] != null)
+{
+    <div class="text-danger" role="alert">
+        <h2>@ViewData["ErrorMessage"]</h2>
+    </div>
+}
+else
+{
+    <div class="text-info">
+        <h2>@ViewData["Message"]</h2>
+    </div>
+}
+<form method="post">
+    <div class="mb-3">
+        <label for="displayName" asp-for="Input.DisplayName" class="form-label"></label>
+        <input id="displayName" asp-for="Input.DisplayName" class="form-control" />
+        <span asp-validation-for="Input.DisplayName"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <p>Avatar</p>
+        @foreach (var avatar in AvatarCatalog.Options)
+        {
+            <p>
+                <label>
+                    <input type="radio"
+                           asp-for="Input.AvatarId"
+                           value="@avatar.Id"
+                           aria-label="@avatar.DisplayName" />
+
+                    <img src="@AvatarCatalog.ImagePath(avatar.Id)"
+                         alt="@avatar.DisplayName avatar"
+                         class="rounded-circle"
+                         style="width: 25px; height: 25px; object-fit: cover;" />
+
+                    @avatar.DisplayName
+                </label>
+            </p>
+        }
+        <span asp-validation-for="Input.AvatarId"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Submit Changes
+    </button>
+</form>

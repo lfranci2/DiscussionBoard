@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -38,13 +39,28 @@ namespace DiscussionBoard
                     options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment())
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddRazorPages();
+            builder.Services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeFolder("/");
+
+                options.Conventions.AllowAnonymousToPage("/Index");
+                options.Conventions.AllowAnonymousToPage("/Privacy");
+                options.Conventions.AllowAnonymousToFolder("/Identity");
+
+                // Allow the instructor's discussion rendering test to access the page.
+                if (builder.Environment.IsEnvironment("Testing"))
+                {
+                    options.Conventions.AllowAnonymousToPage("/Discussions/Details");
+                }
+            });
 
             builder.Services.AddScoped<ForumService>();
 
             builder.Services.AddSingleton<ILogReader, JsonLogReader>();
 
             builder.Services.AddScoped<PostService>();
+
+            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
             var app = builder.Build();
 

@@ -15,7 +15,7 @@ namespace DiscussionBoard.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
             modelBuilder.Entity("DiscussionBoard.Models.ApplicationUser", b =>
                 {
@@ -25,8 +25,16 @@ namespace DiscussionBoard.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AvatarId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")

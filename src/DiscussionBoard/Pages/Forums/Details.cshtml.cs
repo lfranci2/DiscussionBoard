@@ -1,11 +1,13 @@
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Pages
 {
+    [Authorize]
     public class Details : PageModel
     {
         private readonly ApplicationDbContext _db;
@@ -32,6 +34,7 @@ namespace DiscussionBoard.Pages
 
             Threads = await _db.Set<DiscussionThread>()
                 .Where(t => t.ForumId == id)
+                .Include(t => t.ApplicationUser)
                 .ToListAsync();
 
             return Page();

@@ -10,6 +10,6 @@ namespace DiscussionBoard.Models
         public string Content { get; set; } = string.Empty;
         public DateTimeOffset CreatedAt  {get; set;} = new DateTimeOffset();
         public string ApplicationUserId { get; set; } = string.Empty;
-        public ApplicationUser ApplicationUser {get; set;} = new ApplicationUser();
+        public ApplicationUser? ApplicationUser {get; set;}
     }
 }

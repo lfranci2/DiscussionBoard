@@ -16,6 +16,7 @@ namespace DiscussionBoard.Services
         {
             return await _db.Posts
                 .Where(p => p.DiscussionThreadId == id && !p.IsDeleted)
+                .Include(p => p.ApplicationUser)
                 .ToListAsync();
         }
 

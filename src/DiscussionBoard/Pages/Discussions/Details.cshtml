@@ -1,7 +1,32 @@
 ﻿@page "/Discussion/{threadId}"
+@using DiscussionBoard.Services
+@using Microsoft.IdentityModel.Tokens
 @model DiscussionBoard.Pages.Discussions.Details
 
 <h1>@Model.Thread.Title</h1>
+
+<div class="align-items-center mb-3">
+    @if (string.IsNullOrWhiteSpace(Model.Thread.ApplicationUser?.DisplayName))
+    {
+        <p>
+            Unconfigured User
+        </p>
+        <img src="@AvatarCatalog.ImagePath(AvatarCatalog.DefaultId)"
+             alt="Unconfigured User avatar"
+             class="rounded-circle"
+             style="width: 25px; height: 25px; object-fit: cover;" />
+    }
+    else
+    {
+        <p>
+            @Model.Thread.ApplicationUser.DisplayName
+        </p>
+        <img src="@AvatarCatalog.ImagePath(Model.Thread.ApplicationUser.AvatarId)"
+             alt="@Model.Thread.ApplicationUser.DisplayName avatar"
+             class="rounded-circle"
+             style="width: 25px; height: 25px; object-fit: cover;" />
+    }
+</div>
 
 <div class="card mb-4">
     @Model.Thread.Content

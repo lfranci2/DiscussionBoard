@@ -1,6 +1,27 @@
-﻿@model DiscussionBoard.Models.DiscussionThread
+﻿@using DiscussionBoard.Services
+@model DiscussionBoard.Models.DiscussionThread
 <article class="card mb-3">
     <div class="card-body">
+        @if (string.IsNullOrWhiteSpace(Model.ApplicationUser?.DisplayName))
+        {
+            <p>
+                Unconfigured User
+            </p>
+            <img src="@AvatarCatalog.ImagePath(@AvatarCatalog.DefaultId)"
+                 alt="Unconfigured User avatar"
+                 class="rounded-circle"
+                 style="width: 25px; height: 25px; object-fit: cover;" />
+        }
+        else
+        {
+            <p>
+                @Model.ApplicationUser.DisplayName
+            </p>
+            <img src="@AvatarCatalog.ImagePath(Model.ApplicationUser.AvatarId)"
+                 alt="@Model.ApplicationUser.DisplayName avatar"
+                 class="rounded-circle"
+                 style="width: 25px; height: 25px; object-fit: cover;" />
+        }
         <h2 class="h5"><a asp-page="/Discussion/Details" asp-route-id="@Model.Id">@Model.Title</a></h2>
         <p>@Model.Content</p>
     </div>

@@ -13,19 +13,16 @@ namespace DiscussionBoard.Data
         {
             base.OnModelCreating(builder);
             builder.Entity<DiscussionThread>()
-                .HasMany(t => t.Posts)
-                .WithOne(p => p.DiscussionThread)
-                .HasForeignKey(t => t.DiscussionThreadId);
-            builder.Entity<Post>(entity =>
-            {
-                entity.HasOne(p => p.DiscussionThread)
-                    .WithMany(t => t.Posts)
-                    .HasForeignKey(i => i.DiscussionThreadId);
-                entity.HasMany(t => t.Replies)
-                    .WithOne(p => p.ParentPost)
-                    .HasForeignKey(i => i.ParentPostId)
-                    .IsRequired(false);
-            });
+                .HasOne(t => t.ApplicationUser)
+                .WithMany(u => u.DiscussionThreads)
+                .HasForeignKey(t => t.ApplicationUserId)
+                .IsRequired();
+
+            builder.Entity<Post>()
+                .HasOne(p => p.ApplicationUser)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(p => p.ApplicationUserId)
+                .IsRequired();
             builder.Entity<Forum>()
                 .HasMany(p => p.DiscussionThreads)
                 .WithOne(t => t.Forum)

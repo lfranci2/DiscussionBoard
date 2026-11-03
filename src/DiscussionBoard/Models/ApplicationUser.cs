@@ -4,6 +4,8 @@ namespace DiscussionBoard.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public string DisplayName { get; set; } = string.Empty;
+        public string AvatarId { get; set; } = "default";
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<DiscussionThread> DiscussionThreads { get; set; } = new List<DiscussionThread>();
     }

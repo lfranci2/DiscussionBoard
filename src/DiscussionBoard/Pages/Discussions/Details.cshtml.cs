@@ -2,6 +2,7 @@
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace DiscussionBoard.Pages.Discussions
         {
             var thread = await _db.DiscussionThreads
                 .Include(t => t.Posts)
+                .Include(t => t.ApplicationUser)
                 .FirstOrDefaultAsync(t => t.Id == threadId);
 
             if (thread == null)
@@ -122,6 +124,7 @@ namespace DiscussionBoard.Pages.Discussions
         {
             var thread = await _db.DiscussionThreads
                 .Include(t => t.Posts)
+                .Include(t => t.ApplicationUser)
                 .FirstOrDefaultAsync(t => t.Id == threadId);
 
             if (thread == null)

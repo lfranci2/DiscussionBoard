@@ -1,12 +1,14 @@
 using System.Security.Claims;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Pages.Discussions
 {
+    [Authorize]
     public class Edit : PageModel
     {
         [BindProperty]
