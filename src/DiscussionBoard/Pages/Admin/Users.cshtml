@@ -1,0 +1,11 @@
+@page
+@model DiscussionBoard.Pages.Admin.Users
+
+@{
+}
+
+<form method="get">
+    <select asp-for="SelectedUserId" asp-items="Model.UserList" class="form-control">
+        <option value="">-- Select User --</option>
+    </select>
+</form>
