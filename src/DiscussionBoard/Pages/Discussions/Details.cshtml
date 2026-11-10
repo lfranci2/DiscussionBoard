@@ -1,7 +1,9 @@
-﻿@page "/Discussion/{threadId}"
+﻿@page "/Discussion/{threadId:int}"
+@using DiscussionBoard.Authorization
 @using DiscussionBoard.Services
 @using Microsoft.IdentityModel.Tokens
 @model DiscussionBoard.Pages.Discussions.Details
+@inject IApplicationAuthorizationService AuthorizationService
 
 <h1>@Model.Thread.Title</h1>
 
@@ -25,6 +27,14 @@
              alt="@Model.Thread.ApplicationUser.DisplayName avatar"
              class="rounded-circle"
              style="width: 25px; height: 25px; object-fit: cover;" />
+    }
+    @if (await AuthorizationService.CanEditAsync(User, Model.Thread))
+    {
+        <a asp-page="/Discussions/Edit"
+           asp-route-id="@Model.Thread.Id"
+           class="btn btn-primary">
+            Edit
+        </a>
     }
 </div>
 

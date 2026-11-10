@@ -5,6 +5,7 @@ using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -48,12 +49,6 @@ namespace DiscussionBoard
                 options.Conventions.AllowAnonymousToPage("/Index");
                 options.Conventions.AllowAnonymousToPage("/Privacy");
                 options.Conventions.AllowAnonymousToFolder("/Identity");
-
-                // Allow the instructor's discussion rendering test to access the page.
-                if (builder.Environment.IsEnvironment("Testing"))
-                {
-                    options.Conventions.AllowAnonymousToPage("/Discussions/Details");
-                }
             });
 
             builder.Services.AddScoped<ForumService>();
@@ -62,7 +57,23 @@ namespace DiscussionBoard
 
             builder.Services.AddScoped<PostService>();
 
+            builder.Services.AddScoped<DiscussionThreadService>();
+
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+
+            builder.Services.AddScoped<IApplicationAuthorizationService, ApplicationAuthorizationService>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    ApplicationAuthorizationPolicies.IsOwnerOrAdmin,
+                    policy =>
+                    {
+                        policy.Requirements.Add(new IsOwnerOrAdminRequirement());
+                    });
+            });
+
+            builder.Services.AddScoped<IAuthorizationHandler, IsOwnerOrAdminHandler>();
 
             var app = builder.Build();
 
@@ -71,11 +82,9 @@ namespace DiscussionBoard
             {
                 app.UseMigrationsEndPoint();
             }
-            else
+            else if (!app.Environment.IsEnvironment("Testing"))
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days.
-                // You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -90,19 +99,6 @@ namespace DiscussionBoard
 
             app.MapRazorPages()
                 .WithStaticAssets();
-
-            if (args.Contains("--bootstrap-admin", StringComparer.Ordinal))
-            {
-                if (!app.Environment.IsDevelopment())
-                {
-                    throw new InvalidOperationException("This bootstrap tool is Development-only.");
-                }
-                await AdminBootstrapper.BootstrapAsync(
-                    app.Services,
-                    app.Configuration["BootstrapAdmin:Email"]
-                );
-                return;
-            }
 
             app.Run();
         }

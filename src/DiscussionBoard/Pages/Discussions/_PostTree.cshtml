@@ -1,5 +1,7 @@
-﻿@using DiscussionBoard.Services
+﻿@using DiscussionBoard.Authorization
+@using DiscussionBoard.Services
 @model DiscussionBoard.Services.PostTreeBuilder.Node
+@inject IApplicationAuthorizationService AuthorizationService
 <article class="border rounded p-3 mb-3" aria-label="Post" data-post-id="@Model.Post.Id">
     <p class="mb-1">@Model.Post.Content</p>
     @if (string.IsNullOrWhiteSpace(Model.Post.ApplicationUser?.DisplayName))
@@ -21,6 +23,14 @@
              alt="@Model.Post.ApplicationUser.DisplayName avatar"
              class="rounded-circle"
              style="width: 25px; height: 25px; object-fit: cover;" />
+    }
+    @if (await AuthorizationService.CanEditAsync(User, Model.Post))
+    {
+        <a asp-page="/Discussion/{threadId:int}/Post/Edit/{postId:int}"
+           asp-route-id="@Model.Post.Id"
+           class="btn btn-primary">
+            Edit
+        </a>
     }
     <small class="text-muted">@Model.Post.ApplicationUser?.UserName — @Model.Post.CreatedAt.ToLocalTime().ToString("g")</small>
     @if (User.Identity?.IsAuthenticated == true)

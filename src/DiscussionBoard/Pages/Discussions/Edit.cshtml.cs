@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DiscussionBoard.Authorization;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -9,25 +10,26 @@ using Microsoft.EntityFrameworkCore;
 namespace DiscussionBoard.Pages.Discussions
 {
     [Authorize]
-    public class Edit : PageModel
+    public class ThreadEditModel : PageModel
     {
         [BindProperty]
-        public CreateModel Input { get; set; } = new();
+        public DiscussionEditViewModel Input { get; set; } = new();
         private readonly ApplicationDbContext _db;
-        private readonly ILogger<Create> _logger;
+        private readonly ILogger<ThreadEditModel> _logger;
+        private readonly  IAuthorizationService _authorizationService;
+        private readonly IApplicationAuthorizationService _applicationAuthorizationService;
 
-        public Edit(ApplicationDbContext db,  ILogger<Create> logger)
+        public ThreadEditModel(
+            ApplicationDbContext db,
+            ILogger<ThreadEditModel> logger,
+            IAuthorizationService authorizationService,
+            IApplicationAuthorizationService applicationAuthorizationService)
         {
             _db = db;
             _logger = logger;
+            _authorizationService = authorizationService;
+            _applicationAuthorizationService = applicationAuthorizationService;
         }
-        public void OnGet()
-        {
-
-        }
-
-        [BindProperty]
-        public DiscussionThread Thread { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -41,20 +43,30 @@ namespace DiscussionBoard.Pages.Discussions
 
             var thread = await _db.DiscussionThreads
                 .FirstOrDefaultAsync(t => t.Id == id);
-
             if (thread == null)
             {
                 _logger.LogWarning("Requested thread not found");
                 return NotFound();
             }
-
-            if (thread.ApplicationUserId != userId)
+            bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, thread));
+            if (!canEdit)
             {
-                _logger.LogWarning("UserId does not match thread");
+                _logger.LogWarning("User cannot edit this thread");
                 return Forbid();
             }
 
-            Thread = new DiscussionThread
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                User,
+                thread,
+                ApplicationAuthorizationPolicies.IsOwnerOrAdmin);
+
+            if (!authorizationResult.Succeeded)
+            {
+                _logger.LogWarning("User is not authorized to edit this thread");
+                return Forbid();
+            }
+
+            Input = new DiscussionEditViewModel
             {
                 Title = thread.Title,
                 Content = thread.Content
@@ -64,11 +76,6 @@ namespace DiscussionBoard.Pages.Discussions
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
@@ -85,10 +92,27 @@ namespace DiscussionBoard.Pages.Discussions
                 return NotFound();
             }
 
-            if (thread.ApplicationUserId != userId)
+            bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, thread));
+            if (!canEdit)
             {
-                _logger.LogWarning("UserId does not match thread");
+                _logger.LogWarning("User cannot edit this thread");
                 return Forbid();
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                User,
+                thread,
+                ApplicationAuthorizationPolicies.IsOwnerOrAdmin);
+
+            if (!authorizationResult.Succeeded)
+            {
+                _logger.LogWarning("User is not authorized to edit this thread");
+                return Forbid();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
             }
 
             thread.Title = Input.Title;
@@ -96,7 +120,7 @@ namespace DiscussionBoard.Pages.Discussions
 
             await _db.SaveChangesAsync();
 
-            return RedirectToPage("./Discussion", new { id = thread.Id });
+            return RedirectToPage("/Discussions/Details", new { threadId = thread.Id });
         }
     }
 }
