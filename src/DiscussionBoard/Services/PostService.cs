@@ -12,6 +12,33 @@ namespace DiscussionBoard.Services
             _db = context;
         }
 
+        public async Task<Post> GetAsync(int id)
+        {
+            var post = await _db.Posts.FirstOrDefaultAsync(p => p.Id == id);
+            if (post == null || post.IsDeleted)
+            {
+                return null;
+            }
+            else
+            {
+                return post;
+            }
+        }
+
+        public async Task UpdateAsync(Post post)
+        {
+            var existingPost = await _db.Posts
+                .FirstOrDefaultAsync(p => p.Id == post.Id && !p.IsDeleted);
+
+            if (existingPost == null)
+            {
+                return;
+            }
+            existingPost.Title = post.Title;
+            existingPost.Content = post.Content;
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<List<Post>> GetForThreadAsync(int id)
         {
             return await _db.Posts

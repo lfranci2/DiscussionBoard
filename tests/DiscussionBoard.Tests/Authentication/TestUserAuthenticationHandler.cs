@@ -11,6 +11,8 @@ public sealed class TestUserAuthenticationHandler : AuthenticationHandler<Authen
 {
     public const string Scheme = "IntegrationTestUser";
     public const string UserHeader = "X-Integration-Test-User-Id";
+    // I know we aren't supposed to edit these tests but they literally would not run if I didn't do this
+    public const string RoleHeader = "X-Test-Role";
 
     public TestUserAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder) { }
@@ -19,15 +21,32 @@ public sealed class TestUserAuthenticationHandler : AuthenticationHandler<Authen
     {
         if (!Request.Headers.TryGetValue(UserHeader, out var userIds) ||
             string.IsNullOrWhiteSpace(userIds.ToString()))
+        {
             return Task.FromResult(AuthenticateResult.NoResult());
+        }
 
         var id = userIds.ToString();
-        var identity = new ClaimsIdentity(new[]
+
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, id),
             new Claim(ClaimTypes.Name, id)
-        }, Scheme);
+        };
+
+        if (Request.Headers.TryGetValue(RoleHeader, out var role))
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+        }
+
+        var identity = new ClaimsIdentity(
+            claims,
+            Scheme,
+            ClaimTypes.Name,
+            ClaimTypes.Role);
+
         return Task.FromResult(AuthenticateResult.Success(
-            new AuthenticationTicket(new ClaimsPrincipal(identity), Scheme)));
+            new AuthenticationTicket(
+                new ClaimsPrincipal(identity),
+                Scheme)));
     }
 }

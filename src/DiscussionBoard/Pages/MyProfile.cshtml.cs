@@ -66,7 +66,8 @@ namespace DiscussionBoard.Pages
                 );
                 return Page();
             }
-            bool isValidName = await _userProfileService.IsDisplayNameAvailableAsync(Input.DisplayName, user.Id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            bool isValidName = await _userProfileService.IsDisplayNameAvailableAsync(Input.DisplayName, userId);
             if (!isValidName)
             {
                 ModelState.AddModelError(

@@ -1,11 +1,45 @@
 @page
-@model DiscussionBoard.Pages.Admin.Users
+@using DiscussionBoard.Authorization
+@model DiscussionBoard.Pages.Admin.UsersModel
 
 @{
 }
 
-<form method="get">
+<form method="post">
     <select asp-for="SelectedUserId" asp-items="Model.UserList" class="form-control">
         <option value="">-- Select User --</option>
     </select>
+    <button type="submit" class="btn btn-info">
+        Load User
+    </button>
 </form>
+@ViewData["Success"]
+@if (Model.SelectedUser != null)
+{
+    <h2>Username: @Model.SelectedUser.DisplayName</h2>
+    <h2>Email: @Model.SelectedUser.Email</h2>
+    @if (Model.IsAdmin)
+    {
+        <form method="post" asp-page-handler="Remove">
+            <input type="hidden"
+                   asp-for="SelectedUserId"
+                   value="@Model.SelectedUser.Id" />
+
+            <button type="submit" class="btn btn-danger">
+                Remove Admin
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-page-handler="Add">
+            <input type="hidden"
+                   asp-for="SelectedUserId"
+                   value="@Model.SelectedUser.Id" />
+
+            <button type="submit" class="btn btn-success">
+                Add Admin
+            </button>
+        </form>
+    }
+}

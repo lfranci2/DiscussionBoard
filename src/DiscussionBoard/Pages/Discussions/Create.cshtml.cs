@@ -22,12 +22,12 @@ namespace DiscussionBoard.Pages.Discussions
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(int forumId)
         {
 
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int forumId)
         {
             if (!ModelState.IsValid)
             {

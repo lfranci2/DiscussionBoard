@@ -52,16 +52,20 @@ namespace DiscussionBoard.Services
 
         public async Task<DiscussionThread> UpdateAsync(DiscussionThread thread)
         {
-            try
-            {
-                var entry = _db.DiscussionThreads.Update(thread);
-                await _db.SaveChangesAsync();
-                return entry.Entity;
-            }
-            catch (Exception ex)
+            var existingThread = await _db.DiscussionThreads
+                .FirstOrDefaultAsync(t => t.Id == thread.Id && !t.IsDeleted);
+
+            if (existingThread == null)
             {
                 return null;
             }
+
+            existingThread.Title = thread.Title;
+            existingThread.Content = thread.Content;
+
+            await _db.SaveChangesAsync();
+
+            return existingThread;
         }
 
     }
