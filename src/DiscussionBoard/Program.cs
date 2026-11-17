@@ -90,6 +90,28 @@ namespace DiscussionBoard
 
             app.UseHttpsRedirection();
 
+            app.Use(async (context, next) =>
+{
+    // CSP Header Definition
+    context.Response.Headers.Add("Content-Security-Policy",
+        "default-src 'self';" +
+        "script-src 'self';" +
+        "style-src 'self';" +
+        "img-src 'self' data:;" +
+        "font-src 'self';" +
+        "connect-src 'self';" +
+        "media-src 'self';" +
+        "object-src 'self';" +
+        "prefetch-src 'self';" +
+        "child-src 'self';" +
+        "frame-src 'self';" +
+        "worker-src 'self';" +
+        "frame-ancestors 'self';" +
+        "form-action 'self'"
+    );
+    await next();
+});
+
             app.UseRouting();
 
             app.UseAuthentication();
