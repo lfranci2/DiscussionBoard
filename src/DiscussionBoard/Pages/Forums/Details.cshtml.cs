@@ -40,5 +40,10 @@ namespace DiscussionBoard.Pages
             return Page();
         }
 
+        public void OnGetCreate()
+        {
+
+        }
+
     }
 }
