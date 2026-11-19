@@ -39,7 +39,7 @@ namespace DiscussionBoard.Pages.Discussions
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
-                _logger.LogWarning("UserId is null");
+                _logger.LogWarning("Failed to create thread: user ID is null");
                 return Challenge();
             }
 
@@ -51,6 +51,7 @@ namespace DiscussionBoard.Pages.Discussions
             };
             _db.Add(thread);
             await _db.SaveChangesAsync();
+            _logger.LogInformation("Discussion Thread {ThreadId} created in forum {ForumId}", thread.Id, thread.ForumId);
             return RedirectToPage("/Discussions/Details", new { threadId = thread.Id });
         }
     }

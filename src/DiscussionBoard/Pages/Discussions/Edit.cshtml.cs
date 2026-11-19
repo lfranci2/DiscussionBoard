@@ -45,13 +45,13 @@ namespace DiscussionBoard.Pages.Discussions
                 .FirstOrDefaultAsync(t => t.Id == id);
             if (thread == null)
             {
-                _logger.LogWarning("Requested thread not found");
+                _logger.LogWarning("Requested thread at {Id} does not exist.", id);
                 return NotFound();
             }
             bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, thread));
             if (!canEdit)
             {
-                _logger.LogWarning("User cannot edit this thread");
+                _logger.LogWarning("User cannot edit thread {ThreadId}", thread.Id);
                 return Forbid();
             }
 
@@ -62,7 +62,7 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!authorizationResult.Succeeded)
             {
-                _logger.LogWarning("User is not authorized to edit this thread");
+                _logger.LogWarning("User is not authorized to edit this thread {ThreadId}", thread.Id);
                 return Forbid();
             }
 
@@ -88,14 +88,14 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (thread == null)
             {
-                _logger.LogWarning("Requested thread not found");
+                _logger.LogWarning("Requested thread at {Id} does not exist.", id);
                 return NotFound();
             }
 
             bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, thread));
             if (!canEdit)
             {
-                _logger.LogWarning("User cannot edit this thread");
+                _logger.LogWarning("User cannot edit thread {ThreadId}", thread.Id);
                 return Forbid();
             }
 
@@ -106,7 +106,7 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!authorizationResult.Succeeded)
             {
-                _logger.LogWarning("User is not authorized to edit this thread");
+                _logger.LogWarning("User is not authorized to edit this thread {ThreadId}", thread.Id);
                 return Forbid();
             }
 
@@ -119,7 +119,7 @@ namespace DiscussionBoard.Pages.Discussions
             thread.Content = Input.Content;
 
             await _db.SaveChangesAsync();
-
+            _logger.LogInformation("Edited Discussion Thread {ThreadId} in forum {ForumId}", thread.Id, thread.ForumId);
             return RedirectToPage("/Discussions/Details", new { threadId = thread.Id });
         }
     }
