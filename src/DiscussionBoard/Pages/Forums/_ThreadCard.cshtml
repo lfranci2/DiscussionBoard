@@ -4,25 +4,35 @@
     <div class="card-body">
         @if (string.IsNullOrWhiteSpace(Model.ApplicationUser?.DisplayName))
         {
-            <p>
-                Unconfigured User
-            </p>
-            <img src="@AvatarCatalog.ImagePath(@AvatarCatalog.DefaultId)"
-                 alt="Unconfigured User avatar"
-                 class="rounded-circle"
-                 style="width: 25px; height: 25px; object-fit: cover;" />
+            <div class="d-flex gap-2">
+                <img src="@AvatarCatalog.ImagePath(@AvatarCatalog.DefaultId)"
+                     alt="Unconfigured User avatar"
+                     class="rounded-circle"
+                     width="50"
+                     height="50"
+                     style="object-fit: cover;" />
+                <p>
+                    Unconfigured User
+                </p>
+            </div>
         }
         else
         {
-            <p>
-                @Model.ApplicationUser.DisplayName
-            </p>
-            <img src="@AvatarCatalog.ImagePath(Model.ApplicationUser.AvatarId)"
-                 alt="@Model.ApplicationUser.DisplayName avatar"
-                 class="rounded-circle"
-                 style="width: 25px; height: 25px; object-fit: cover;" />
+            <div class="d-flex gap-2">
+                <img src="@AvatarCatalog.ImagePath(Model.ApplicationUser.AvatarId)"
+                     alt="@Model.ApplicationUser.DisplayName avatar"
+                     class="rounded-circle"
+                     width="50"
+                     height="50"
+                     style="object-fit: cover;" />
+                <p>
+                    @Model.ApplicationUser.DisplayName
+                </p>
+            </div>
         }
-        <h2 class="h5"><a asp-page="/Discussion/Details" asp-route-id="@Model.Id">@Model.Title</a></h2>
+        <a asp-page="/Discussions/Details" asp-route-threadId="@Model.Id">
+            @Model.Title
+        </a>
         <p>@Model.Content</p>
     </div>
 </article>

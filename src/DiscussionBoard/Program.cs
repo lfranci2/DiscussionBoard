@@ -17,21 +17,17 @@ namespace DiscussionBoard
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Get the location of the Logs folder for SeriLog
-            string logPath = Path.Combine(builder.Environment.ContentRootPath, "Logs",  "discussionboard-.json");
+            string logPath = Path.Combine(
+                builder.Environment.ContentRootPath,
+                "Logs",
+                "discussionboard-.json");
 
             builder.Configuration["Serilog:Logpath"] = logPath;
 
-            builder.Services.AddSerilog((services, configuration) => configuration
-                .ReadFrom.Configuration(builder.Configuration)
-                .WriteTo.Console()
-                .WriteTo.Async(a => a.File(
-                    new RenderedCompactJsonFormatter(),
-                    logPath,
-                    rollingInterval: RollingInterval.Day,
-                    shared: true)
-                    )
-            );
+            builder.Configuration["Serilog:WriteTo:1:Args:configure:0:Args:path"] = logPath;
+
+            builder.Services.AddSerilog((services, configuration) =>
+                configuration.ReadFrom.Configuration(builder.Configuration));
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                                    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

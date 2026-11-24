@@ -57,7 +57,7 @@ namespace DiscussionBoard.Pages.Discussions
             bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, post));
             if (!canEdit)
             {
-                _logger.LogWarning("User cannot edit this post");
+                _logger.LogWarning("User cannot edit this post {PostId}", post.Id);
                 return Forbid();
             }
 
@@ -68,7 +68,7 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!authorizationResult.Succeeded)
             {
-                _logger.LogWarning("User is not authorized to edit this post");
+                _logger.LogWarning("User is not authorized to edit this post {PostId}", post.Id);
                 return Forbid();
             }
 
@@ -106,7 +106,7 @@ namespace DiscussionBoard.Pages.Discussions
             bool canEdit = await (_applicationAuthorizationService.CanEditAsync(User, post));
             if (!canEdit)
             {
-                _logger.LogWarning("User cannot edit this thread");
+                _logger.LogWarning("User cannot edit this post {PostId}", post.Id);
                 return Forbid();
             }
 
@@ -117,7 +117,7 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!authorizationResult.Succeeded)
             {
-                _logger.LogWarning("User is not authorized to edit this thread");
+                _logger.LogWarning("User is not authorized to edit this post {PostId}", post.Id);
                 return Forbid();
             }
 

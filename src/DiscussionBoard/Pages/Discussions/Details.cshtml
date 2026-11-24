@@ -7,41 +7,44 @@
 
 <h1>@Model.Thread.Title</h1>
 
-<div class="align-items-center mb-3">
+<div class="d-flex align-items-center gap-2 mb-3">
     @if (string.IsNullOrWhiteSpace(Model.Thread.ApplicationUser?.DisplayName))
     {
-        <p>
-            Unconfigured User
-        </p>
         <img src="@AvatarCatalog.ImagePath(AvatarCatalog.DefaultId)"
              alt="Unconfigured User avatar"
              class="rounded-circle"
-             style="width: 25px; height: 25px; object-fit: cover;" />
+             width="50"
+             height="50"
+             style="object-fit: cover;" />
+        <p>
+            Unconfigured User
+        </p>
     }
     else
     {
-        <p>
-            @Model.Thread.ApplicationUser.DisplayName
-        </p>
         <img src="@AvatarCatalog.ImagePath(Model.Thread.ApplicationUser.AvatarId)"
              alt="@Model.Thread.ApplicationUser.DisplayName avatar"
              class="rounded-circle"
-             style="width: 25px; height: 25px; object-fit: cover;" />
-    }
-    @if (await AuthorizationService.CanEditAsync(User, Model.Thread))
-    {
-        <a asp-page="/Discussions/Edit"
-           asp-route-id="@Model.Thread.Id"
-           class="btn btn-primary">
-            Edit
-        </a>
+             width="50"
+             height="50"
+             style="object-fit: cover;" />
+        <p>
+            @Model.Thread.ApplicationUser.DisplayName
+        </p>
     }
 </div>
 
 <div class="card mb-4">
     @Model.Thread.Content
 </div>
-
+@if (await AuthorizationService.CanEditAsync(User, Model.Thread))
+{
+    <a asp-page="/Discussions/Edit"
+       asp-route-id="@Model.Thread.Id"
+       class="btn btn-primary">
+        Edit
+    </a>
+}
 <h2>Posts</h2>
 
 @if (Model.PostTree.Count == 0)

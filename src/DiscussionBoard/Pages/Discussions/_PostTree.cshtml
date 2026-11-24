@@ -12,7 +12,9 @@
         <img src="@AvatarCatalog.ImagePath(@AvatarCatalog.DefaultId)"
              alt="Unconfigured User avatar"
              class="rounded-circle"
-             style="width: 25px; height: 25px; object-fit: cover;" />
+             width="50"
+             height="50"
+             style="object-fit: cover;" />
     }
     else
     {
@@ -22,12 +24,15 @@
         <img src="@AvatarCatalog.ImagePath(Model.Post.ApplicationUser.AvatarId)"
              alt="@Model.Post.ApplicationUser.DisplayName avatar"
              class="rounded-circle"
-             style="width: 25px; height: 25px; object-fit: cover;" />
+             width="50"
+             height="50"
+             style="object-fit: cover;" />
     }
     @if (await AuthorizationService.CanEditAsync(User, Model.Post))
     {
-        <a asp-page="/Discussion/{threadId:int}/Post/Edit/{postId:int}"
-           asp-route-id="@Model.Post.Id"
+        <a asp-page="/Discussions/EditPost"
+           asp-route-threadId="@Model.Post.DiscussionThreadId"
+           asp-route-postId="@Model.Post.Id"
            class="btn btn-primary">
             Edit
         </a>

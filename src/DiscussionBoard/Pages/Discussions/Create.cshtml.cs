@@ -5,6 +5,7 @@ using DiscussionBoard.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Pages.Discussions
 {
@@ -43,11 +44,20 @@ namespace DiscussionBoard.Pages.Discussions
                 return Challenge();
             }
 
+            var forumExists = await _db.Forums.AnyAsync(f => f.Id == forumId);
+
+            if (!forumExists)
+            {
+                _logger.LogWarning("Forum {ForumId} does not exist", forumId);
+                return NotFound();
+            }
+
             var thread = new DiscussionThread
             {
                 Title = Input.Title,
                 Content = Input.Content,
-                ApplicationUserId = userId
+                ApplicationUserId = userId,
+                ForumId = forumId
             };
             _db.Add(thread);
             await _db.SaveChangesAsync();
